@@ -1,0 +1,58 @@
+digraph ATM_Para_Cekme_Sistemi {
+    rankdir=TB;
+    node [fontname="Arial"];
+
+    // Başlangıç ve bitiş
+    start [shape=oval, label="BAŞLA"];
+    end [shape=oval, label="BİTİR"];
+
+    // Başlangıç değişkenleri
+    vars [shape=box, label="bakiye = 2000\ngünlük_limit = 1500\ndeneme_hakkı = 3\ndoğru_pin = 1234"];
+
+    // PIN doğrulama girişi
+    pin_input [shape=parallelogram, label="OKU girilen_pin"];
+    pin_check [shape=diamond, label="girilen_pin == doğru_pin?"];
+    pin_true [shape=box, label="YAZ 'PIN doğru'\nİşleme devam et"];
+    pin_false [shape=box, label="deneme_hakkı = deneme_hakkı - 1\nYAZ 'Hatalı PIN'\nKalan hak göster"];
+    pin_try_again [shape=diamond, label="deneme_hakkı > 0?"];
+    pin_lock [shape=box, label="YAZ 'Hesap kilitlendi'"];
+
+    // Para çekme kısmı
+    amount_input [shape=parallelogram, label="OKU tutar"];
+    check_20 [shape=diamond, label="tutar 20 TL katı mı?"];
+    check_balance [shape=diamond, label="tutar > bakiye?"];
+    check_limit [shape=diamond, label="tutar > günlük_limit?"];
+    withdraw [shape=box, label="bakiye = bakiye - tutar\ngünlük_limit = günlük_limit - tutar"];
+    print_success [shape=parallelogram, label="YAZ 'Tutar çekildi, yeni bakiye: ...'"];
+    repeat_question [shape=parallelogram, label="YAZ 'Başka işlem yapmak ister misiniz? (E/H)'\nOKU cevap"];
+    repeat_check [shape=diamond, label="cevap == 'E'?"];
+    goodbye [shape=parallelogram, label="YAZ 'İyi günler dileriz.'"];
+
+    // Bağlantılar
+    start -> vars -> pin_input;
+    pin_input -> pin_check;
+    pin_check -> pin_true [label="Evet"];
+    pin_check -> pin_false [label="Hayır"];
+    pin_false -> pin_try_again;
+    pin_try_again -> pin_input [label="Evet"];
+    pin_try_again -> pin_lock [label="Hayır"];
+    pin_lock -> end;
+    pin_true -> amount_input;
+
+    // Para çekme akışı
+    amount_input -> check_20;
+    check_20 -> check_balance [label="Evet"];
+    check_20 -> amount_input [label="Hayır\n(YAZ '20 TL katı olmalı')"];
+
+    check_balance -> check_limit [label="Hayır"];
+    check_balance -> amount_input [label="Evet\n(YAZ 'Yetersiz bakiye')"];
+
+    check_limit -> withdraw [label="Hayır"];
+    check_limit -> amount_input [label="Evet\n(YAZ 'Limit aşıldı')"];
+
+    withdraw -> print_success -> repeat_question;
+    repeat_question -> repeat_check;
+    repeat_check -> amount_input [label="Evet"];
+    repeat_check -> goodbye [label="Hayır"];
+    goodbye -> end;
+}
