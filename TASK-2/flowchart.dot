@@ -1,0 +1,76 @@
+digraph ECommerceSystem {
+    rankdir=TB;
+    node [shape=box, style=rounded];
+
+    Start [label="BAŞLA", shape=oval];
+    Login [label="Kullanıcı girişi yaptı mı?", shape=diamond];
+    LoginProcess [label="Giriş yap veya yeni hesap oluştur", shape=parallelogram];
+    Home [label="Ana sayfa göster", shape=box];
+
+    ShoppingLoop [label="Kullanıcı alışveriş yapmaya devam ediyor mu?", shape=diamond];
+    SelectProduct [label="Ürün seç", shape=box];
+    StockCheck [label="Ürün stokta var mı?", shape=diamond];
+    AddToCart [label="Ürünü sepete ekle", shape=box];
+    NoStock [label="Stokta yok uyarısı göster", shape=parallelogram];
+
+    ViewCart [label="Kullanıcı sepeti görüntülemek istiyor mu?", shape=diamond];
+    ShowCart [label="Sepeti göster", shape=box];
+    UpdateQty [label="Ürün miktarını güncelle", shape=box];
+    DeleteProduct [label="Ürünü sil", shape=box];
+
+    Checkout [label="Kullanıcı ödeme aşamasına geçti mi?", shape=diamond];
+    DiscountCode [label="İndirim kodu girdi mi?", shape=diamond];
+    CheckCode [label="Kod geçerli mi?", shape=diamond];
+    ApplyDiscount [label="İndirimi uygula", shape=box];
+    InvalidCode [label="Kod geçersiz uyarısı", shape=parallelogram];
+
+    Shipping [label="Kargo hesapla", shape=box];
+    Payment [label="Ödeme onayı", shape=diamond];
+    UpdateStock [label="Stok güncelle", shape=box];
+    Invoice [label="Fatura oluştur", shape=box];
+    ConfirmOrder [label="Siparişi onayla", shape=box];
+    ShippingStart [label="Kargo sürecini başlat", shape=box];
+    PaymentFail [label="Ödeme başarısız uyarısı", shape=parallelogram];
+
+    End [label="BİTİR", shape=oval];
+
+    Start -> Login;
+    Login -> LoginProcess [label="HAYIR"];
+    Login -> Home [label="EVET"];
+    LoginProcess -> Home;
+
+    Home -> ShoppingLoop;
+    ShoppingLoop -> SelectProduct [label="EVET"];
+    ShoppingLoop -> Checkout [label="HAYIR"];
+
+    SelectProduct -> StockCheck;
+    StockCheck -> AddToCart [label="EVET"];
+    StockCheck -> NoStock [label="HAYIR"];
+    AddToCart -> ViewCart;
+    NoStock -> ViewCart;
+
+    ViewCart -> ShowCart [label="EVET"];
+    ViewCart -> ShoppingLoop [label="HAYIR"];
+    ShowCart -> UpdateQty;
+    UpdateQty -> DeleteProduct;
+    DeleteProduct -> ShoppingLoop;
+
+    Checkout -> DiscountCode [label="EVET"];
+    Checkout -> End [label="HAYIR"];
+
+    DiscountCode -> CheckCode [label="EVET"];
+    DiscountCode -> Shipping [label="HAYIR"];
+    CheckCode -> ApplyDiscount [label="EVET"];
+    CheckCode -> InvalidCode [label="HAYIR"];
+    ApplyDiscount -> Shipping;
+    InvalidCode -> Shipping;
+
+    Shipping -> Payment;
+    Payment -> UpdateStock [label="EVET"];
+    Payment -> PaymentFail [label="HAYIR"];
+    UpdateStock -> Invoice;
+    Invoice -> ConfirmOrder;
+    ConfirmOrder -> ShippingStart;
+    ShippingStart -> End;
+    PaymentFail -> End;
+}
