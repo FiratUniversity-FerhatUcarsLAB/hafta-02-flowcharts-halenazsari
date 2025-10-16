@@ -1,0 +1,144 @@
+Modül bir ve ikiyi yap. Son adımı henüz yapma.
+Tabii 💫 Görseldeki göreve göre Modül 1 (Randevu Alma) ve Modül 2 (Tahlil Sonuçları) için ayrı ayrı pseudocode’ları aşağıda yazdım.
+“Son Adım: Birleştirme” kısmını senin isteğinle henüz eklemedim.
+
+
+---
+
+🩺 Modül 1: Randevu Alma – Pseudocode
+
+BAŞLA
+    Kullanıcıdan TC kimlik numarası ve şifre al
+    Kimlik doğrulaması yap
+    EĞER kimlik doğrulaması başarısızsa
+        "Kimlik bilgileri hatalı!" mesajı göster
+        BİTİR
+    DEĞİLSE
+        Kullanıcıya hastane ve poliklinik listesi göster
+        Kullanıcıdan poliklinik seçimi al
+        Seçilen polikliniğe uygun doktor listesini getir
+        Kullanıcıya doktor listesini göster
+        Kullanıcıdan doktor seçimi al
+        Seçilen doktorun uygun saatlerini listele
+        Kullanıcıdan uygun saat seçimi al
+        Randevuyu onayla
+        Randevu bilgilerini veri tabanına kaydet
+        Kullanıcıya randevu onay mesajı göster
+        SMS ile randevu bilgilerini gönder
+    SON
+BİTİR
+
+
+---
+
+🧪 Modül 2: Tahlil Sonuçları – Pseudocode
+
+BAŞLA
+    Kullanıcıdan TC kimlik numarası ve şifre al
+    Kimlik doğrulaması yap
+    EĞER kimlik doğrulaması başarısızsa
+        "Kimlik bilgileri hatalı!" mesajı göster
+        BİTİR
+    DEĞİLSE
+        Sistemde tahlil sonucu var mı kontrol et
+        EĞER sonuçlar henüz hazır değilse
+            "Tahlil sonucu hazırlanıyor, lütfen daha sonra tekrar deneyin." mesajı göster
+        DEĞİLSE
+            Tahlil sonuçlarını görüntüle
+            Kullanıcıya PDF olarak indirme seçeneği sun
+        SON
+    SON
+BİTİR
+
+
+---
+
+İstersen bir sonraki adımda bu iki modülü DOT (Graphviz) formatında subgraph’lar şeklinde birleştirebiliriz.
+Hazırsan “Son Adım: Birleştirme” kısmına geçelim mi?
+
+Son adımı yap
+
+Harika 💫 Şimdi iki modülü (Randevu Alma ve Tahlil Sonuçları) ana menüyle birleştirip, her modülü ayrı bir subgraph olarak göstereceğim şekilde DOT (Graphviz) kodunu yazıyorum.
+
+
+---
+
+🧩 Son Adım: Birleştirme (DOT Kodu)
+
+digraph HastaneSistemi {
+
+    rankdir=LR;
+    label="Hastane Otomasyon Sistemi";
+    labelloc=top;
+    fontsize=20;
+
+    // Ana Menü
+    AnaMenu [shape=box, style=filled, color=lightblue, label="Ana Menü\n1. Randevu Alma\n2. Tahlil Sonuçları"];
+
+    // --- Modül 1: Randevu Alma ---
+    subgraph cluster_Randevu {
+        label = "Modül 1: Randevu Alma";
+        style = filled;
+        color = lightgrey;
+
+        R1 [shape=parallelogram, label="Kimlik Bilgilerini Gir"];
+        R2 [shape=diamond, label="Kimlik Doğrulama Başarılı mı?"];
+        R3 [shape=box, label="Poliklinik Seç"];
+        R4 [shape=box, label="Doktor Seç"];
+        R5 [shape=box, label="Uygun Saat Seç"];
+        R6 [shape=box, label="Randevuyu Onayla"];
+        R7 [shape=parallelogram, label="SMS ile Onay Mesajı Gönder"];
+        R8 [shape=ellipse, label="Randevu Tamamlandı"];
+        RX [shape=ellipse, label="Kimlik Hatası"];
+
+        R1 -> R2;
+        R2 -> RX [label="Hayır"];
+        R2 -> R3 [label="Evet"];
+        R3 -> R4 -> R5 -> R6 -> R7 -> R8;
+    }
+
+    // --- Modül 2: Tahlil Sonuçları ---
+    subgraph cluster_Tahlil {
+        label = "Modül 2: Tahlil Sonuçları";
+        style = filled;
+        color = lightyellow;
+
+        T1 [shape=parallelogram, label="Kimlik Bilgilerini Gir"];
+        T2 [shape=diamond, label="Kimlik Doğrulama Başarılı mı?"];
+        T3 [shape=box, label="Tahlil Sonucu Hazır mı?"];
+        T4 [shape=parallelogram, label="Sonuçları Görüntüle"];
+        T5 [shape=box, label="PDF Olarak İndir"];
+        T6 [shape=ellipse, label="İşlem Tamamlandı"];
+        TX [shape=ellipse, label="Kimlik Hatası"];
+        TW [shape=ellipse, label="Sonuç Hazırlanıyor"];
+
+        T1 -> T2;
+        T2 -> TX [label="Hayır"];
+        T2 -> T3 [label="Evet"];
+        T3 -> TW [label="Hayır"];
+        T3 -> T4 -> T5 -> T6;
+    }
+
+    // --- Ana Menü bağlantıları ---
+    AnaMenu -> R1 [label="1. Randevu Alma"];
+    AnaMenu -> T1 [label="2. Tahlil Sonuçları"];
+}
+
+
+---
+
+Bu DOT kodunu bir .dot dosyasına (örneğin hastane.dot) kaydedip
+Graphviz’de şu komutla görselleştirebilirsin:
+
+dot -Tpng hastane.dot -o hastane.png
+
+📊 Çıktı olarak:
+
+Ana menüden iki farklı modüle giden yolları,
+
+Her modülün kendi içinde adım adım ilerleyişini,
+
+Hatalı kimlik ve bekleme durumlarını ayrı çıkışlar olarak göreceksin.
+
+
+İstersen bu diyagramı sana görsel olarak da çizebilirim. İster misin görsel halini de oluşturayım?
