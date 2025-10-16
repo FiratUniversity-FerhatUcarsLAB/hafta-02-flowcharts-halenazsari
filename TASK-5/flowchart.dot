@@ -1,0 +1,110 @@
+digraph AkilliEvGuvenlikSistemi {
+    rankdir=TB
+    node [shape=rectangle, style=rounded]
+    graph [splines=ortho]
+    
+    // Başlangıç noktası
+    start [label="Sistem Başlatma", shape=ellipse]
+    
+    // Sistem değişkenleri
+    subgraph cluster_variables {
+        label="Sistem Değişkenleri"
+        style=dashed
+        
+        sistemAktif [label="sistemAktif = DOĞRU"]
+        alarmDurumu [label="alarmDurumu = YANLIŞ"]
+        tehditSeviyesi [label="tehditSeviyesi = 0"]
+    }
+    
+    // Ana döngü
+    subgraph cluster_main_loop {
+        label="Ana Sistem Döngüsü"
+        style=filled
+        fillcolor=lightblue
+        
+        loop_start [label="↻ Sürekli Döngü", shape=ellipse]
+        
+        // Sistem aktif kontrolü
+        sistemKontrol [label="Sistem Aktif mi?", shape=diamond]
+        
+        // Aktif durum işlemleri
+        subgraph cluster_active {
+            label="Sistem Aktif İşlemleri"
+            style=filled
+            fillcolor=lightgreen
+            
+            sensorOku [label="Sensörleri Oku:\n- Hareket sensörü\n- Kapı sensörü\n- Pencere sensörü\n- Ev sahibi kontrolü"]
+            
+            alarmKontrol [label="Alarm Durumu?", shape=diamond]
+            
+            // Alarm pasif durumu
+            subgraph cluster_alarm_pasif {
+                label="Alarm Pasif"
+                style=filled
+                fillcolor=yellow
+                
+                tehditAnaliz [label="Tehdit Analizi:\nHareket VEYA Kapı VEYA Pencere açık?", shape=diamond]
+                yanlisAlarmKontrol [label="Ev Sahibi Evde mi?", shape=diamond]
+                tehditSeviyeBelirle [label="Tehdit Seviyesi Belirle:\n- Hareket: Seviye 3\n- Kapı: Seviye 2\n- Pencere: Seviye 1"]
+                alarmAktifEt [label="Alarmı Aktif Et\nve Bildirim Gönder"]
+            }
+            
+            // Alarm aktif durumu
+            subgraph cluster_alarm_aktif {
+                label="Alarm Aktif"
+                style=filled
+                fillcolor=orange
+                
+                kameraKayit [label="Kamera Kaydı Başlat"]
+                alarmSifirlama [label="Alarm Sıfırlama Sinyali?", shape=diamond]
+                alarmDurdur [label="Alarmı Durdur\nve Sıfırla"]
+            }
+            
+            bekleme [label="5 Saniye Bekle"]
+        }
+        
+        // Sistem pasif durumu
+        sistemPasif [label="Sistem Pasif\n10 Saniye Bekle"]
+        
+        // Uzaktan komut kontrolü
+        komutKontrol [label="Uzaktan Komut Var?", shape=diamond]
+        komutIsleme [label="Komut İşleme:\n- SISTEM_AKTIF → sistemAktif = DOĞRU\n- SISTEM_PASIF → sistemAktif = YANLIŞ"]
+    }
+    
+    // Bağlantılar
+    start -> loop_start
+    loop_start -> sistemKontrol
+    
+    // Sistem aktif/pasif dallanma
+    sistemKontrol -> sensorOku [label="DOĞRU"]
+    sistemKontrol -> sistemPasif [label="YANLIŞ"]
+    sistemPasif -> komutKontrol [label="Bekleme tamamlandı"]
+    
+    // Aktif sistem işlemleri
+    sensorOku -> alarmKontrol
+    alarmKontrol -> tehditAnaliz [label="YANLIŞ"]
+    alarmKontrol -> kameraKayit [label="DOĞRU"]
+    
+    // Alarm pasif dalı
+    tehditAnaliz -> yanlisAlarmKontrol [label="DOĞRU"]
+    tehditAnaliz -> bekleme [label="YANLIŞ"]
+    yanlisAlarmKontrol -> tehditSeviyeBelirle [label="YANLIŞ"]
+    yanlisAlarmKontrol -> bekleme [label="DOĞRU"]
+    tehditSeviyeBelirle -> alarmAktifEt
+    alarmAktifEt -> bekleme
+    
+    // Alarm aktif dalı
+    kameraKayit -> alarmSifirlama
+    alarmSifirlama -> alarmDurdur [label="DOĞRU"]
+    alarmSifirlama -> bekleme [label="YANLIŞ"]
+    alarmDurdur -> bekleme
+    
+    // Uzaktan komut işleme
+    bekleme -> komutKontrol
+    komutKontrol -> komutIsleme [label="DOĞRU"]
+    komutKontrol -> loop_start [label="YANLIŞ"]
+    komutIsleme -> loop_start
+    
+    // Döngüyü göster
+    loop_start -> loop_start [style=invis]
+}
