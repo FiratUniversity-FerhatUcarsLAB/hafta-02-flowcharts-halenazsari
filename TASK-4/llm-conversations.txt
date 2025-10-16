@@ -1,0 +1,391 @@
+Sistem gereksinimlerini slayttan LLM'e attım ve şunları konuştuk:
+
+Sistem gereksinimlerine dikkat ederek üniversite ders kayıt sisteminin genel akışını açıkla. Giriş, Ders listesi, ders seçimi, kontroller onaylama
+
+Üniversite ders kayıt sistemi genel akışını aşağıdaki gibi adım adım açıklayabilirim:
+
+---
+
+1. Giriş (Login)
+
+· Öğrenci, sisteme öğrenci numarası ve şifresi ile giriş yapar.
+· Sistem kimlik doğrulama yapar:
+  · Başarısız ise → hata mesajı gösterilir ve tekrar giriş yapması istenir.
+  · Başarılı ise → ders kayıt ekranına yönlendirilir.
+
+---
+
+2. Ders Listesi Görüntüleme
+
+· Sisteme giriş yapıldıktan sonra, öğrenciye:
+  · Açık olan derslerin listesi (kod, ad, kredi, kontenjan, ders saatleri) sunulur.
+  · Öğrencinin alabileceği dersler (sınıf, ön şart, mufredat) filtrelenmiş şekilde gösterilir.
+
+---
+
+3. Ders Seçimi
+
+· Öğrenci, listeye göre istediği dersleri seçer:
+  · Ders ekleme / çıkarma yapabilir.
+  · “Geçici liste” veya “kayıt taslağı” oluşturulur.
+
+---
+
+4. Kontroller (Onay Öncesi Kontrol Süreci)
+
+Sistem, seçilen dersleri aşağıdaki kurallara göre kontrol eder:
+
+· Kontenjan kontrolü: Seçilen dersin kontenjanı dolmuş mu?
+· Çakışma kontrolü: Ders saatleri çakışıyor mu?
+· Kredi limiti: Maksimum kredi aşılıyor mu?
+· Ön şart kontrolü: Gerekli ön koşul dersleri alınmış mı?
+· Tekrar ders kaydı: Aynı derse tekrar kayıt yapılıyor mu?
+
+➡️ Herhangi bir uyumsuzluk varsa → hata mesajı ile birlikte düzeltme yapması istenir.
+
+---
+
+5. Onaylama
+
+· Tüm kontrollerden geçtikten sonra öğrenci “Kaydı Onayla” butonuna tıklar.
+· Sistem kaydı veritabanına işler.
+· Kayıt onay mesajı gösterilir.
+· Ders programı / Çıktı belgesi (program schedule) oluşturulur ve ekranda gösterilir.
+
+---
+
+6. Çıkış
+
+· İşlem tamamlandıktan sonra öğrenci çıkış yapabilir.
+· Sistem güvenli çıkış ile sonlanır.
+
+---
+
+
+Ders kaydında yapılması gereken kontrolleri listele: kontenjan ön koşul, zaman çakışması, kredi kartı limiti, danışman onayı.
+
+İşte üniversite ders kaydı sırasında yapılması gereken kontrollerin detaylı listesi:
+
+---
+
+1. Kontenjan Kontrolü
+
+· Seçilmek istenen dersin kontenjanı kontrol edilir
+· Mevcut kayıtlı öğrenci sayısı < Maksimum kontenjan ise kayıt yapılabilir
+· Kontenjan dolmuşsa:
+  · Öğrenciye "Ders kontenjanı dolu" uyarısı verilir
+  · Yedek listeye alınma seçeneği sunulabilir
+
+2. Ön Koşul Kontrolü
+
+· Dersin ön koşulu var mı kontrol edilir
+· Ön koşul ders(ler) daha önce alınmış ve başarılmış mı?
+· Ön koşul not ortalaması şartı sağlanıyor mu?
+· Ön koşul eksikse: "Ön koşul dersi tamamlamadınız" hatası
+
+3. Zaman Çakışması Kontrolü
+
+· Seçilen derslerin ders saatleri karşılaştırılır
+· Aynı zaman diliminde birden fazla ders seçilmiş mi?
+· Sınav tarihleri çakışıyor mu?
+· Çakışma varsa: "Ders saatleri çakışıyor" uyarısı
+
+4. Kredi Limiti Kontrolü
+
+· Maksimum kredi limiti: Dönemlik alınabilecek maksimum kredi
+· Minimum kredi limiti: Dönemlik alınması gereken minimum kredi
+· Öğrencinin seçtiği toplam kredi kontrol edilir
+· Akademik başarı durumuna göre kredi limiti değişikliği kontrolü
+· Limit aşılıyorsa: "Kredi limitini aştınız" uyarısı
+
+5. Danışman Onayı Kontrolü
+
+· Öğrencinin danışman onayı gerekiyor mu?
+· Danışman onayı alınmış mı?
+· Onay süreci:
+  · Danışman onayı bekleniyor
+  · Danışman reddetti
+  · Danışman onayladı
+· Onay yoksa: "Danışman onayı gereklidir" uyarısı
+
+---
+
+Ek Kontroller:
+
+6. Müfredat Uygunluk Kontrolü
+
+· Seçilen ders öğrencinin müfredatında var mı?
+· Sınıf düzeyine uygun mu?
+
+7. Tekrar Ders Kontrolü
+
+· Daha önce alınıp geçilen ders tekrar alınıyor mu?
+· FF veya DZ notu olan dersler için tekrar kayıt kontrolü
+
+8. Engel Durumu Kontrolü
+
+· Öğrencinin kayıt engeli (borç, disiplin cezası, vb.) var mı?
+· Akademik yarıyıl kayıt hakkı kontrolü
+
+9. Ders Ekleme/Bırakma Tarih Kontrolü
+
+· İşlem, kayıt dönemi içinde mi yapılıyor?
+· Ders ekleme/bırakma için son tarih geçmiş mi?
+
+---
+
+Bu kontrollerin tamamı başarılı olduğunda ders kaydı onaylanır ve sistem tarafından işleme alınır.
+
+Tüm bu kontrollerle birlikte detaylı pseudocode yaz. İç içe EĞER - İSE yapıları ve döngüleri kullan
+
+BAŞLA
+    // Giriş ve Kimlik Doğrulama
+    YAZDIR "Üniversite Ders Kayıt Sistemine Hoş Geldiniz"
+    
+    // Giriş Kontrolü
+    DOĞRU_ŞEKİLDE_GİRİŞ_YAP = YANLIŞ
+    DENEME_SAYISI = 0
+    MAKS_DENEME = 3
+    
+    DÖNGÜ DENEME_SAYISI < MAKS_DENEME VE DOĞRU_ŞEKİLDE_GİRİŞ_YAP == YANLIŞ
+        OKU öğrenciNo
+        OKU şifre
+        
+        EĞER kimlikDoğrula(öğrenciNo, şifre) == DOĞRU İSE
+            DOĞRU_ŞEKİLDE_GİRİŞ_YAP = DOĞRU
+            YAZDIR "Giriş başarılı!"
+            ÖĞRENCİ_BİLGİ = getÖğrenciBilgileri(öğrenciNo)
+        DEĞİLSE
+            DENEME_SAYISI = DENEME_SAYISI + 1
+            YAZDIR "Hatalı giriş! Kalan deneme: " + (MAKS_DENEME - DENEME_SAYISI)
+        EĞER_BİTTİ
+    DÖNGÜ_BİTTİ
+    
+    EĞER DOĞRU_ŞEKİLDE_GİRİŞ_YAP == YANLIŞ İSE
+        YAZDIR "Çok fazla hatalı giriş. Sistemden çıkılıyor..."
+        DURDUR
+    EĞER_BİTTİ
+    
+    // Öğrenci bilgilerini al
+    öğrenciID = ÖĞRENCİ_BİLGİ.id
+    sınıf = ÖĞRENCİ_BİLGİ.sınıf
+    danışmanID = ÖĞRENCİ_BİLGİ.danışmanID
+    alınanKredi = ÖĞRENCİ_BİLGİ.toplamKredi
+    
+    // Genel kontroller
+    EĞER kayıtEngeliKontrol(öğrenciID) == DOĞRU İSE
+        YAZDIR "Kayıt engeliniz bulunuyor. İdari birime başvurun."
+        DURDUR
+    EĞER_BİTTİ
+    
+    EĞER kayıtDönemiKontrol() == YANLIŞ İSE
+        YAZDIR "Kayıt dönemi dışındasınız."
+        DURDUR
+    EĞER_BİTTİ
+    
+    // Ders listesini getir
+    DERS_LISTESİ = getUygunDersler(sınıf, öğrenciID)
+    seçilenDersler = []
+    toplamKredi = 0
+    
+    // Ders seçim döngüsü
+    YAZDIR "Ders seçimine başlayabilirsiniz:"
+    
+    DÖNGÜ DOĞRU
+        YAZDIR "Mevcut dersler:"
+        I = 0 İKEN I < DERS_LISTESİ.uzunluk KADAR I = I + 1
+            YAZDIR DERS_LISTESİ[I].kod + " - " + DERS_LISTESİ[I].ad + " (" + DERS_LISTESİ[I].kredi + " kredi)"
+        DÖNGÜ_BİTTİ
+        
+        YAZDIR "İşlemler: [E]kle, [Ç]ıkar, [T]amam"
+        OKU işlem
+        
+        EĞER işlem == "E" VEYA işlem == "e" İSE
+            YAZDIR "Eklemek istediğiniz ders kodunu girin:"
+            OKU dersKodu
+            
+            // Ders bulma
+            ders = dersBul(DERS_LISTESİ, dersKodu)
+            
+            EĞER ders == BOŞ İSE
+                YAZDIR "Geçersiz ders kodu!"
+                DEVAM_ET
+            EĞER_BİTTİ
+            
+            // Tüm kontrolleri yap
+            hataVar = YANLIŞ
+            
+            // 1. Kontenjan kontrolü
+            EĞER kontenjanKontrol(ders) == YANLIŞ İSE
+                YAZDIR "Ders kontenjanı dolu!"
+                hataVar = DOĞRU
+            EĞER_BİTTİ
+            
+            // 2. Ön koşul kontrolü
+            EĞER hataVar == YANLIŞ İSE
+                EĞER önKoşulKontrol(öğrenciID, ders) == YANLIŞ İSE
+                    YAZDIR "Ön koşul ders(ler)i tamamlamadınız!"
+                    hataVar = DOĞRU
+                EĞER_BİTTİ
+            EĞER_BİTTİ
+            
+            // 3.
+
+
+Bu pseudocodeu Graphviz DOT diline çevir. Her kontrol noktasını diamond ile göster.
+
+
+
+digraph DersKayitSistemi {
+    rankdir=TB
+    node [shape=rectangle, fontname="Arial", fontsize=10]
+    edge [fontname="Arial", fontsize=9]
+    
+    // Başlangıç
+    start [label="BAŞLA\nDers Kayıt Sistemi", shape=ellipse, style=filled, color=lightblue]
+    
+    // Giriş ve Kimlik Doğrulama
+    subgraph cluster_giris {
+        label="Giriş ve Kimlik Doğrulama"
+        color=blue
+        
+        giris_basla [label="Giriş ekranını göster\nÖğrenciNo ve Şifre iste"]
+        kimlik_dogrulama [label="Kimlik Doğrulama\nYapıldı mı?", shape=diamond]
+        giris_basarili [label="Giriş Başarılı\nÖğrenci bilgilerini al"]
+        giris_hatali [label="Hatalı Giriş\nDeneme sayısını artır"]
+        max_deneme [label="Maksimum deneme\naşıldı mı?", shape=diamond]
+        sistem_cikis [label="Sistemden Çık", shape=ellipse, style=filled, color=lightcoral]
+    }
+    
+    // Genel Sistem Kontrolleri
+    subgraph cluster_genel_kontroller {
+        label="Genel Sistem Kontrolleri"
+        color=green
+        
+        kayit_engeli [label="Kayıt Engeli\nVar mı?", shape=diamond]
+        engel_mesaj [label="Kayıt Engeli Mesajı\nSistemden Çık"]
+        kayit_donemi [label="Kayıt Dönemi\nİçinde mi?", shape=diamond]
+        donemi_mesaj [label="Kayıt Dönemi Dışı\nSistemden Çık"]
+        ders_listesi [label="Uygun Ders Listesini\nGetir"]
+    }
+    
+    // Ders Seçim Süreci
+    subgraph cluster_ders_secim {
+        label="Ders Seçim Süreci"
+        color=orange
+        
+        secim_basla [label="Ders Seçim Ekranını Göster"]
+        islem_sec [label="İşlem Seç:\n[E]kle, [Ç]ıkar, [T]amam"]
+        ders_ekle [label="Ders Ekleme\nİşlemi"]
+        ders_bul [label="Ders Bulundu mu?", shape=diamond]
+        ders_bulunamadi [label="Geçersiz Ders Kodu\nUyarısı"]
+        
+        // Ders Kontrolleri
+        kontenjan_kontrol [label="Kontenjan\nUygun mu?", shape=diamond]
+        onkosul_kontrol [label="Ön Koşul\nTamamlandı mı?", shape=diamond]
+        zaman_cakisma [label="Zaman Çakışması\nVar mı?", shape=diamond]
+        tekrar_ders [label="Tekrar Ders\nKontrolü", shape=diamond]
+        mufredat_kontrol [label="Müfredata\nUygun mu?", shape=diamond]
+        
+        ders_ekle_basarili [label="Dersi Listeye Ekle\nToplam Krediyi Güncelle"]
+        ders_cikar [label="Ders Çıkarma\nİşlemi"]
+        tamam_secimi [label="Seçimi Tamamla"]
+    }
+    
+    // Son Kontroller ve Onay
+    subgraph cluster_son_kontroller {
+        label="Son Kontroller ve Onay"
+        color=purple
+        
+        ders_secildi_mi [label="Ders Seçildi mi?", shape=diamond]
+        secim_yok [label="Hiç Ders Seçilmedi\nUyarı"]
+        kredi_limit [label="Kredi Limiti\nAşıldı mı?", shape=diamond]
+        kredi_az [label="Minimum Kredi\nAltında mı?", shape=diamond]
+        danisman_onay [label="Danışman Onayı\nGerekli mi?", shape=diamond]
+        onay_var_mi [label="Danışman Onayı\nAlındı mı?", shape=diamond]
+        
+        kayit_tamamla [label="Ders Kaydını Tamamla\nVeritabanına Kaydet"]
+        kayit_basarili [label="Kayıt Başarılı\nDers Programını Göster"]
+        kayit_hatali [label="Kayıt Hatası\nTekrar Dene"]
+    }
+    
+    // Bitiş
+    end [label="SON\nSistemden Çık", shape=ellipse, style=filled, color=lightgreen]
+    
+    // Ana Akış Bağlantıları
+    start -> giris_basla
+    
+    // Giriş Akışı
+    giris_basla -> kimlik_dogrulama
+    kimlik_dogrulama -> giris_basarili [label="Doğru"]
+    kimlik_dogrulama -> giris_hatali [label="Yanlış"]
+    giris_hatali -> max_deneme
+    max_deneme -> giris_basla [label="Hayır"]
+    max_deneme -> sistem_cikis [label="Evet"]
+    giris_basarili -> kayit_engeli
+    
+    // Genel Kontroller Akışı
+    kayit_engeli -> engel_mesaj [label="Evet"]
+    kayit_engeli -> kayit_donemi [label="Hayır"]
+    engel_mesaj -> sistem_cikis
+    kayit_donemi -> donemi_mesaj [label="Hayır"]
+    kayit_donemi -> ders_listesi [label="Evet"]
+    donemi_mesaj -> sistem_cikis
+    
+    // Ders Seçim Akışı
+    ders_listesi -> secim_basla
+    secim_basla -> islem_sec
+    islem_sec -> ders_ekle [label="[E]kle"]
+    islem_sec -> ders_cikar [label="[Ç]ıkar"]
+    islem_sec -> tamam_secimi [label="[T]amam"]
+    
+    // Ders Ekleme Detay Akışı
+    ders_ekle -> ders_bul
+    ders_bul -> ders_bulunamadi [label="Hayır"]
+    ders_bul -> kontenjan_kontrol [label="Evet"]
+    ders_bulunamadi -> secim_basla
+    
+    kontenjan_kontrol -> onkosul_kontrol [label="Uygun"]
+    kontenjan_kontrol -> secim_basla [label="Dolu"]
+    
+    onkosul_kontrol -> zaman_cakisma [label="Tamam"]
+    onkosul_kontrol -> secim_basla [label="Eksik"]
+    
+    zaman_cakisma -> tekrar_ders [label="Yok"]
+    zaman_cakisma -> secim_basla [label="Var"]
+    
+    tekrar_ders -> mufredat_kontrol [label="Hayır"]
+    tekrar_ders -> secim_basla [label="Evet"]
+    
+    mufredat_kontrol -> ders_ekle_basarili [label="Uygun"]
+    mufredat_kontrol -> secim_basla [label="Uygun Değil"]
+    
+    ders_ekle_basarili -> secim_basla
+    ders_cikar -> secim_basla
+    
+    // Son Kontroller Akışı
+    tamam_secimi -> ders_secildi_mi
+    ders_secildi_mi -> secim_yok [label="Hayır"]
+    ders_secildi_mi -> kredi_limit [label="Evet"]
+    secim_yok -> sistem_cikis
+    
+    kredi_limit -> kredi_az [label="Aşılmadı"]
+    kredi_limit -> secim_basla [label="Aşıldı"]
+    
+    kredi_az -> danisman_onay [label="Hayır"]
+    kredi_az -> secim_basla [label="Evet"]
+    
+    danisman_onay -> onay_var_mi [label="Gerekli"]
+    danisman_onay -> kayit_tamamla [label="Gerekli Değil"]
+    
+    onay_var_mi -> kayit_tamamla [label="Var"]
+    onay_var_mi -> secim_basla [label="Yok"]
+    
+    kayit_tamamla -> kayit_basarili [label="Başarılı"]
+    kayit_tamamla -> kayit_hatali [label="Hatalı"]
+    kayit_hatali -> secim_basla
+    
+    // Bitiş Bağlantıları
+    kayit_basarili -> end
+    sistem_cikis -> end
+}
