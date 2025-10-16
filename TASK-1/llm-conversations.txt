@@ -1,0 +1,176 @@
+Slayttaki promptu LLM'e attım ve pseudocode oluşturrmasını istedim.
+
+
+  Fotoğraftaki metin şunu söylüyor 👇
+
+> Görev 1: LLM ile Çalışma Adımları
+Adım 1: Pseudocode Oluşturma
+
+LLM’e sorun:
+“ATM para çekme sistemi için detaylı pseudocode yazmanı istiyorum.
+Şunları içermeli:
+
+PIN doğrulama (3 hak)
+
+Bakiye kontrolü
+
+Tutar kontrolü (20 TL katları)
+
+Günlük limit kontrolü
+
+İşlem tekrarı seçeneği
+
+
+Adımları BAŞLA, OKU, YAZ, EĞER-İSE, DÖNGÜ yapılarıyla yaz.”
+
+
+
+
+---
+
+İstenen bu göreve göre örnek pseudocode şöyle olur 👇
+
+
+---
+
+💻 ATM Para Çekme Sistemi – Pseudocode
+
+BAŞLA
+  tanımla bakiye = 2000
+  tanımla günlük_limit = 1500
+  tanımla deneme_hakkı = 3
+  tanımla doğru_pin = 1234
+
+  // PIN DOĞRULAMA
+  DÖNGÜ (deneme_hakkı > 0)
+      OKU girilen_pin
+      EĞER girilen_pin == doğru_pin İSE
+          YAZ "PIN doğru. İşleme devam ediliyor..."
+          ÇIK DÖNGÜDEN
+      DEĞİLSE
+          deneme_hakkı = deneme_hakkı - 1
+          YAZ "Hatalı PIN. Kalan deneme hakkı: ", deneme_hakkı
+      BİTİR EĞER
+  SON DÖNGÜ
+
+  EĞER deneme_hakkı == 0 İSE
+      YAZ "Hesap kilitlendi."
+      DUR
+  BİTİR EĞER
+
+  // PARA ÇEKME İŞLEMİ
+  TEKRARLA
+      OKU tutar
+      EĞER tutar % 20 != 0 İSE
+          YAZ "Tutar 20 TL katlarında olmalı."
+      DEĞİLSE EĞER tutar > bakiye İSE
+          YAZ "Yetersiz bakiye."
+      DEĞİLSE EĞER tutar > günlük_limit İSE
+          YAZ "Günlük limit aşıldı."
+      DEĞİLSE
+          bakiye = bakiye - tutar
+          günlük_limit = günlük_limit - tutar
+          YAZ tutar, " TL çekildi. Yeni bakiye: ", bakiye
+      BİTİR EĞER
+
+      YAZ "Başka işlem yapmak ister misiniz? (E/H)"
+      OKU cevap
+  KENARCA cevap == "E"
+  YAZ "İyi günler dileriz."
+BİTİR
+
+
+---
+
+İstersen bu pseudocode’u flowchart (akış diyagramı) şeklinde de çizeb
+
+İster misin onu da oluşturmamı?
+
+Bu pseudocodeu Graphviz DOT diline çevir. Başla/Bitir için oval, girdi/çıktı için parallelogram, işlem için box, karar için diamond kullan. Tüm okları ve etiketleri ekle.
+
+
+
+  Harika, isteğine göre aşağıdaki Graphviz DOT dili kodu, verdiğimiz ATM para çekme sistemi pseudocode’unun akış diyagramını oluşturur.
+Şekiller:
+
+Oval → Başla / Bitir
+
+Parallelogram → Girdi / Çıktı
+
+Box → İşlem
+
+Diamond → Karar
+
+
+
+---
+
+digraph ATM_Para_Cekme_Sistemi {
+    rankdir=TB;
+    node [fontname="Arial"];
+
+    // Başlangıç ve bitiş
+    start [shape=oval, label="BAŞLA"];
+    end [shape=oval, label="BİTİR"];
+
+    // Başlangıç değişkenleri
+    vars [shape=box, label="bakiye = 2000\ngünlük_limit = 1500\ndeneme_hakkı = 3\ndoğru_pin = 1234"];
+
+    // PIN doğrulama girişi
+    pin_input [shape=parallelogram, label="OKU girilen_pin"];
+    pin_check [shape=diamond, label="girilen_pin == doğru_pin?"];
+    pin_true [shape=box, label="YAZ 'PIN doğru'\nİşleme devam et"];
+    pin_false [shape=box, label="deneme_hakkı = deneme_hakkı - 1\nYAZ 'Hatalı PIN'\nKalan hak göster"];
+    pin_try_again [shape=diamond, label="deneme_hakkı > 0?"];
+    pin_lock [shape=box, label="YAZ 'Hesap kilitlendi'"];
+
+    // Para çekme kısmı
+    amount_input [shape=parallelogram, label="OKU tutar"];
+    check_20 [shape=diamond, label="tutar 20 TL katı mı?"];
+    check_balance [shape=diamond, label="tutar > bakiye?"];
+    check_limit [shape=diamond, label="tutar > günlük_limit?"];
+    withdraw [shape=box, label="bakiye = bakiye - tutar\ngünlük_limit = günlük_limit - tutar"];
+    print_success [shape=parallelogram, label="YAZ 'Tutar çekildi, yeni bakiye: ...'"];
+    repeat_question [shape=parallelogram, label="YAZ 'Başka işlem yapmak ister misiniz? (E/H)'\nOKU cevap"];
+    repeat_check [shape=diamond, label="cevap == 'E'?"];
+    goodbye [shape=parallelogram, label="YAZ 'İyi günler dileriz.'"];
+
+    // Bağlantılar
+    start -> vars -> pin_input;
+    pin_input -> pin_check;
+    pin_check -> pin_true [label="Evet"];
+    pin_check -> pin_false [label="Hayır"];
+    pin_false -> pin_try_again;
+    pin_try_again -> pin_input [label="Evet"];
+    pin_try_again -> pin_lock [label="Hayır"];
+    pin_lock -> end;
+    pin_true -> amount_input;
+
+    // Para çekme akışı
+    amount_input -> check_20;
+    check_20 -> check_balance [label="Evet"];
+    check_20 -> amount_input [label="Hayır\n(YAZ '20 TL katı olmalı')"];
+
+    check_balance -> check_limit [label="Hayır"];
+    check_balance -> amount_input [label="Evet\n(YAZ 'Yetersiz bakiye')"];
+
+    check_limit -> withdraw [label="Hayır"];
+    check_limit -> amount_input [label="Evet\n(YAZ 'Limit aşıldı')"];
+
+    withdraw -> print_success -> repeat_question;
+    repeat_question -> repeat_check;
+    repeat_check -> amount_input [label="Evet"];
+    repeat_check -> goodbye [label="Hayır"];
+    goodbye -> end;
+}
+
+
+---
+
+🎯 Kullanım: Bu kodu bir .dot dosyasına (örneğin atm.dot) kaydedip şu komutla görselleştirebilirsin:
+
+dot -Tpng atm.dot -o atm.png
+
+İstersen aynı diyagramı renkli ve daha modern stilde (örneğin mavi akış, gri kararlar) olarak da biçimlendirebilirim.
+Böyle mi istersin?
+  
