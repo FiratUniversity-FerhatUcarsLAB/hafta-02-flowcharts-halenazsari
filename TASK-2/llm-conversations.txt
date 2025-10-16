@@ -1,0 +1,182 @@
+LLM'e slaytta verilen promptları atıp sırasıyla yapmasını söyledim.
+
+ilk promptu yap.
+
+Tabii! Görseldeki “İlk Prompt” şu şekildeydi 👇
+
+> “E-ticaret sitesinde sepet yönetimi ve ödeme sistemini adım adım açıkla. Kullanıcı girişi, ürün ekleme, stok kontrolü, indirim kodu, kargo hesaplama ve ödeme aşamalarını içermeli.”
+
+
+
+Aşağıda bu sistem analizini adım adım senin için yazdım 👇
+
+
+---
+
+💡 Adım 1: Sistem Analizi — E-Ticaret Sitesi Sepet ve Ödeme Yönetimi
+
+1. Kullanıcı Girişi / Üyelik Sistemi
+
+Kullanıcı yeni hesap oluşturur veya mevcut hesabıyla giriş yapar.
+
+Sistemde kullanıcı bilgileri (isim, adres, ödeme yöntemi, e-posta vb.) veritabanında tutulur.
+
+Giriş yapılmadan sepete ürün eklenemez.
+
+
+
+2. Ürün Ekleme ve Sepet Yönetimi
+
+Kullanıcı, ürün listesinden istediği ürünü seçer.
+
+“Sepete Ekle” işlemiyle ürün, kullanıcının sepetine eklenir.
+
+Sepetteki ürünlerin adetleri artırılabilir veya azaltılabilir.
+
+Ürün silme, toplam tutarı yeniden hesaplama işlemleri yapılır.
+
+
+
+3. Stok Kontrolü
+
+Ürün sepete eklenmeden önce sistem stok durumunu kontrol eder.
+
+Stokta yeterli miktar yoksa uyarı mesajı gösterilir.
+
+Satın alma sonrası stoktan düşülür.
+
+
+
+4. İndirim Kodu Uygulaması
+
+Kullanıcı indirim kodu girerse sistem kodun geçerli olup olmadığını kontrol eder.
+
+Geçerliyse toplam tutardan belirli bir yüzde veya miktar düşülür.
+
+Kod bir defaya mahsus veya belirli ürünlerde geçerli olabilir.
+
+
+
+5. Kargo Hesaplama
+
+Kullanıcının adres bilgisine göre kargo ücreti hesaplanır.
+
+Belirli bir tutarın üzerindeki siparişlerde ücretsiz kargo seçeneği uygulanabilir.
+
+Tahmini teslim süresi kullanıcıya gösterilir.
+
+
+
+6. Ödeme Aşamaları
+
+Kullanıcı ödeme yöntemini seçer (kredi kartı, havale, kapıda ödeme vb.).
+
+Kart bilgilerinin doğruluğu ve limit kontrolü yapılır.
+
+Ödeme onaylandıktan sonra sistem fatura oluşturur.
+
+Sipariş durumu “Hazırlanıyor” olarak güncellenir.
+
+
+
+7. Sipariş Tamamlama
+
+Kullanıcıya sipariş özeti ve takip numarası gösterilir.
+
+E-posta veya SMS ile sipariş onayı gönderilir.
+
+Kargo süreci başlatılır.
+
+
+
+
+
+---
+
+İstersen bu analizden yola çıkarak pseudocode veya akış diyagramı (flowchart) da oluşturabilirim 💻
+Hangisini istersin: pseudocode mu yoksa flowchart mı?
+
+
+
+ikinci promptu yap.
+
+Tabii! Görseldeki İkinci Prompt şöyleydi 👇
+
+> “Bu sistemi pseudocode olarak yaz. Döngüler için DÖNGÜ, koşullar için EĞER–İSE kullan. Her adımı BAŞLA ile başlat, BİTİR ile bitir. Tüm kontrol noktalarını belirt.”
+
+
+
+Aşağıda ilk prompttaki e-ticaret sepet ve ödeme sistemi için istenen şekilde pseudocode hâlini yazdım 👇
+
+
+---
+
+🧩 Pseudocode: E-Ticaret Sitesi Sepet ve Ödeme Sistemi
+
+BAŞLA
+
+  KULLANICI_GİRİŞİ()
+  EĞER kullanıcı giriş yapmadı İSE
+      GİRİŞ_YAP() veya YENİ_HESAP_OLUŞTUR()
+  DEĞİLSE
+      ANA_SAYFA_GÖSTER()
+
+  DÖNGÜ kullanıcı alışveriş yapmaya devam ettiği sürece
+      ÜRÜN_SEÇ()
+      EĞER ürün stokta varsa İSE
+          SEPETE_EKLE(ürün)
+      DEĞİLSE
+          "Ürün stokta yok" mesajı göster
+      SON
+
+      EĞER kullanıcı sepeti görüntülemek isterse İSE
+          SEPETİ_GÖSTER()
+          EĞER kullanıcı ürün miktarını değiştirmek isterse İSE
+
+
+
+üçüncü promptu yap.
+
+
+Harika! Görseldeki Üçüncü Prompt şöyleydi 👇
+
+> “Pseudocode’u Graphviz DOT formatına çevir: rankdir=TB kullan. Karar noktalarında EVET/HAYIR etiketlerini unutma.”
+
+
+
+Aşağıda, bir önceki pseudocode’un Graphviz DOT (flowchart) biçimine dönüştürülmüş hâli yer alıyor 👇
+
+
+---
+
+🧭 Graphviz DOT Kodu: E-Ticaret Sitesi Sepet ve Ödeme Sistemi
+
+digraph ECommerceSystem {
+    rankdir=TB;
+    node [shape=box, style=rounded];
+
+    Start [label="BAŞLA", shape=oval];
+    Login [label="Kullanıcı girişi yaptı mı?", shape=diamond];
+    LoginProcess [label="Giriş yap veya yeni hesap oluştur", shape=parallelogram];
+    Home [label="Ana sayfa göster", shape=box];
+
+    ShoppingLoop [label="Kullanıcı alışveriş yapmaya devam ediyor mu?", shape=diamond];
+    SelectProduct [label="Ürün seç", shape=box];
+    StockCheck [label="Ürün stokta var mı?", shape=diamond];
+    AddToCart [label="Ürünü sepete ekle", shape=box];
+    NoStock [label="Stokta yok uyarısı göster", shape=parallelogram];
+
+    ViewCart [label="Kullanıcı sepeti görüntülemek istiyor mu?", shape=diamond];
+    ShowCart [label="Sepeti göster", shape=box];
+    UpdateQty [label="Ürün miktarını güncelle", shape=box];
+    DeleteProduct [label="Ürünü sil", shape=box];
+
+    Checkout [label="Kullanıcı ödeme aşamasına geçti mi?", shape=diamond];
+    DiscountCode [label="İndirim kodu girdi mi?", shape=diamond];
+    CheckCode [label="Kod geçerli mi?", shape=diamond];
+    ApplyDiscount [label="İndirimi uygula", shape=box];
+    InvalidCode [label="Kod geçersiz uyarısı", shape=parallelogram];
+
+    Shipping [label="Kargo hesapla", shape=box];
+    Payment [label="Ödeme onayı", shape=diamond];
+    Update
