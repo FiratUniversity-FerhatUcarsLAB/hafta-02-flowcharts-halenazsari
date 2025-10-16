@@ -1,3 +1,1 @@
-
-
-sistemin kısa açıklaması (maks. 5-6 satır)
+Üniversite ders kayıt sistemi, öğrencilerin kimlik doğrulama sonrası uygun dersleri seçmesini, kontenjan-önkoşul-zaman çakışması gibi kontrollerden geçirmesini ve danışman onayı ile kaydı tamamlamasını sağlayan otomatik bir süreç yönetir.
