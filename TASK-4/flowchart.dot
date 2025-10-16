@@ -1,0 +1,153 @@
+digraph DersKayitSistemi {
+    rankdir=TB
+    node [shape=rectangle, fontname="Arial", fontsize=10]
+    edge [fontname="Arial", fontsize=9]
+    
+    // Başlangıç
+    start [label="BAŞLA\nDers Kayıt Sistemi", shape=ellipse, style=filled, color=lightblue]
+    
+    // Giriş ve Kimlik Doğrulama
+    subgraph cluster_giris {
+        label="Giriş ve Kimlik Doğrulama"
+        color=blue
+        
+        giris_basla [label="Giriş ekranını göster\nÖğrenciNo ve Şifre iste"]
+        kimlik_dogrulama [label="Kimlik Doğrulama\nYapıldı mı?", shape=diamond]
+        giris_basarili [label="Giriş Başarılı\nÖğrenci bilgilerini al"]
+        giris_hatali [label="Hatalı Giriş\nDeneme sayısını artır"]
+        max_deneme [label="Maksimum deneme\naşıldı mı?", shape=diamond]
+        sistem_cikis [label="Sistemden Çık", shape=ellipse, style=filled, color=lightcoral]
+    }
+    
+    // Genel Sistem Kontrolleri
+    subgraph cluster_genel_kontroller {
+        label="Genel Sistem Kontrolleri"
+        color=green
+        
+        kayit_engeli [label="Kayıt Engeli\nVar mı?", shape=diamond]
+        engel_mesaj [label="Kayıt Engeli Mesajı\nSistemden Çık"]
+        kayit_donemi [label="Kayıt Dönemi\nİçinde mi?", shape=diamond]
+        donemi_mesaj [label="Kayıt Dönemi Dışı\nSistemden Çık"]
+        ders_listesi [label="Uygun Ders Listesini\nGetir"]
+    }
+    
+    // Ders Seçim Süreci
+    subgraph cluster_ders_secim {
+        label="Ders Seçim Süreci"
+        color=orange
+        
+        secim_basla [label="Ders Seçim Ekranını Göster"]
+        islem_sec [label="İşlem Seç:\n[E]kle, [Ç]ıkar, [T]amam"]
+        ders_ekle [label="Ders Ekleme\nİşlemi"]
+        ders_bul [label="Ders Bulundu mu?", shape=diamond]
+        ders_bulunamadi [label="Geçersiz Ders Kodu\nUyarısı"]
+        
+        // Ders Kontrolleri
+        kontenjan_kontrol [label="Kontenjan\nUygun mu?", shape=diamond]
+        onkosul_kontrol [label="Ön Koşul\nTamamlandı mı?", shape=diamond]
+        zaman_cakisma [label="Zaman Çakışması\nVar mı?", shape=diamond]
+        tekrar_ders [label="Tekrar Ders\nKontrolü", shape=diamond]
+        mufredat_kontrol [label="Müfredata\nUygun mu?", shape=diamond]
+        
+        ders_ekle_basarili [label="Dersi Listeye Ekle\nToplam Krediyi Güncelle"]
+        ders_cikar [label="Ders Çıkarma\nİşlemi"]
+        tamam_secimi [label="Seçimi Tamamla"]
+    }
+    
+    // Son Kontroller ve Onay
+    subgraph cluster_son_kontroller {
+        label="Son Kontroller ve Onay"
+        color=purple
+        
+        ders_secildi_mi [label="Ders Seçildi mi?", shape=diamond]
+        secim_yok [label="Hiç Ders Seçilmedi\nUyarı"]
+        kredi_limit [label="Kredi Limiti\nAşıldı mı?", shape=diamond]
+        kredi_az [label="Minimum Kredi\nAltında mı?", shape=diamond]
+        danisman_onay [label="Danışman Onayı\nGerekli mi?", shape=diamond]
+        onay_var_mi [label="Danışman Onayı\nAlındı mı?", shape=diamond]
+        
+        kayit_tamamla [label="Ders Kaydını Tamamla\nVeritabanına Kaydet"]
+        kayit_basarili [label="Kayıt Başarılı\nDers Programını Göster"]
+        kayit_hatali [label="Kayıt Hatası\nTekrar Dene"]
+    }
+    
+    // Bitiş
+    end [label="SON\nSistemden Çık", shape=ellipse, style=filled, color=lightgreen]
+    
+    // Ana Akış Bağlantıları
+    start -> giris_basla
+    
+    // Giriş Akışı
+    giris_basla -> kimlik_dogrulama
+    kimlik_dogrulama -> giris_basarili [label="Doğru"]
+    kimlik_dogrulama -> giris_hatali [label="Yanlış"]
+    giris_hatali -> max_deneme
+    max_deneme -> giris_basla [label="Hayır"]
+    max_deneme -> sistem_cikis [label="Evet"]
+    giris_basarili -> kayit_engeli
+    
+    // Genel Kontroller Akışı
+    kayit_engeli -> engel_mesaj [label="Evet"]
+    kayit_engeli -> kayit_donemi [label="Hayır"]
+    engel_mesaj -> sistem_cikis
+    kayit_donemi -> donemi_mesaj [label="Hayır"]
+    kayit_donemi -> ders_listesi [label="Evet"]
+    donemi_mesaj -> sistem_cikis
+    
+    // Ders Seçim Akışı
+    ders_listesi -> secim_basla
+    secim_basla -> islem_sec
+    islem_sec -> ders_ekle [label="[E]kle"]
+    islem_sec -> ders_cikar [label="[Ç]ıkar"]
+    islem_sec -> tamam_secimi [label="[T]amam"]
+    
+    // Ders Ekleme Detay Akışı
+    ders_ekle -> ders_bul
+    ders_bul -> ders_bulunamadi [label="Hayır"]
+    ders_bul -> kontenjan_kontrol [label="Evet"]
+    ders_bulunamadi -> secim_basla
+    
+    kontenjan_kontrol -> onkosul_kontrol [label="Uygun"]
+    kontenjan_kontrol -> secim_basla [label="Dolu"]
+    
+    onkosul_kontrol -> zaman_cakisma [label="Tamam"]
+    onkosul_kontrol -> secim_basla [label="Eksik"]
+    
+    zaman_cakisma -> tekrar_ders [label="Yok"]
+    zaman_cakisma -> secim_basla [label="Var"]
+    
+    tekrar_ders -> mufredat_kontrol [label="Hayır"]
+    tekrar_ders -> secim_basla [label="Evet"]
+    
+    mufredat_kontrol -> ders_ekle_basarili [label="Uygun"]
+    mufredat_kontrol -> secim_basla [label="Uygun Değil"]
+    
+    ders_ekle_basarili -> secim_basla
+    ders_cikar -> secim_basla
+    
+    // Son Kontroller Akışı
+    tamam_secimi -> ders_secildi_mi
+    ders_secildi_mi -> secim_yok [label="Hayır"]
+    ders_secildi_mi -> kredi_limit [label="Evet"]
+    secim_yok -> sistem_cikis
+    
+    kredi_limit -> kredi_az [label="Aşılmadı"]
+    kredi_limit -> secim_basla [label="Aşıldı"]
+    
+    kredi_az -> danisman_onay [label="Hayır"]
+    kredi_az -> secim_basla [label="Evet"]
+    
+    danisman_onay -> onay_var_mi [label="Gerekli"]
+    danisman_onay -> kayit_tamamla [label="Gerekli Değil"]
+    
+    onay_var_mi -> kayit_tamamla [label="Var"]
+    onay_var_mi -> secim_basla [label="Yok"]
+    
+    kayit_tamamla -> kayit_basarili [label="Başarılı"]
+    kayit_tamamla -> kayit_hatali [label="Hatalı"]
+    kayit_hatali -> secim_basla
+    
+    // Bitiş Bağlantıları
+    kayit_basarili -> end
+    sistem_cikis -> end
+}
